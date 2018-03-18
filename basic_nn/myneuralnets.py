@@ -11,6 +11,7 @@
 #   to improve costs. If you'll tweak the initialization or learning rate you might see completely different results.
 
 import numpy as np
+import optimizers
 import matplotlib.pyplot as plt
 
 def initialize_parameters(layer_dims):
@@ -166,17 +167,25 @@ def back_propagation(AL, Y, caches):
 
     return grads
 
-def update_parameters(parameters, grads, learning_rate):
+def update_parameters(parameters, grads, learning_rate, optimizer = 'gd'):
 
-    L = len(parameters) // 2
+    if optimizer == 'gd':
+        L = len(parameters) // 2
 
-    for l in range(L):
-        parameters["W" + str(l+1)] = parameters["W" + str(l+1)] - learning_rate * grads["dW" + str(l+1)]
-        parameters["b" + str(l+1)] = parameters["b" + str(l+1)] - learning_rate * grads["db" + str(l+1)]
+        for l in range(L):
+            parameters["W" + str(l+1)] = parameters["W" + str(l+1)] - learning_rate * grads["dW" + str(l+1)]
+            parameters["b" + str(l+1)] = parameters["b" + str(l+1)] - learning_rate * grads["db" + str(l+1)]
+    if optimizer == 'momentum':
+        v = optimizers.initialize_velocity(parameters)
+        parameters, v = optimizers.momentum_optimizer(parameters, grads, v, learning_rate, beta = 0.9, )
+
+    if optimizer == 'adam':
+        v, s = optimizers.initialize_adam(parameters)
+        parameters, v, s = optimizers.adam_optimizer(parameters, grads, v, s, learning_rate, t=2, beta1=0.9, beta2=0.999, epsilon=1e-8)
 
     return parameters
 
-def classification_nn(X, Y, layer_dims, learning_rate = 0.005, num_iterations = 3000, print_cost = True):
+def classification_nn(X, Y, layer_dims, learning_rate = 0.005, optimizer = 'gd', num_iterations = 3000, print_cost = True):
     #   Implements an L-layer neural network [LINEAR=>RELU]*(L-1) -> [LLINEAR->SIGMOID]
     #   Input : X - numpy I/P array (no. of examples, l*b*3)
     #           Y - true label vector (0 or 1) (1, no. of examples)
@@ -192,7 +201,7 @@ def classification_nn(X, Y, layer_dims, learning_rate = 0.005, num_iterations = 
         AL, caches = L_forward_propagation(X, parameters)
         cost = compute_cost(AL, Y)
         grads = back_propagation(AL, Y, caches)
-        parameters = update_parameters(parameters, grads, learning_rate)
+        parameters = update_parameters(parameters, grads, learning_rate, optimizer)
 
         # printing cost after every 100th iteration
         if print_cost and i % 100 == 0:
