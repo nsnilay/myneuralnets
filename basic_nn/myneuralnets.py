@@ -1,6 +1,6 @@
 ## Created by : Nilay
 
-# This Neural Nets module is for L-layer logistic classification problem. This is a vectorized implementation
+# This Neural Nets module is for L-layer logistic or binary classification problem. This is a vectorized implementation
 # so that no loop is used and thus computation is faster. The input data is a numpy array
 # Also, the L-1 layers uses RELU activation and the Lth layer uses SIGMOID activation
 
@@ -148,19 +148,21 @@ def back_propagation(AL, Y, caches):
     #   Output : grads - a dictionary with gradients
 
     grads = {}
-    L = len(caches)
-    Y = Y.reshape(AL.shape)              # number of layers
+    L = len(caches)                             # number of layers
+    Y = Y.reshape(AL.shape)
 
     dAL = - (np.divide(Y, AL) - np.divide(1 - Y, 1 - AL))  #    dLoss/dAL
 
     #   Grads of last "Lth" layer that will be SIGMOID layer
     current_cache = caches[L-1]
-    grads["dA" + str(L-1)], grads["dW" + str(L)], grads["db" + str(L)] = one_step_backward(dAL, current_cache, 'sigmoid')
+    grads["dA" + str(L-1)], grads["dW" + str(L)], grads["db" + str(L)] = one_step_backward(dAL,
+                                                                current_cache, 'sigmoid')
 
     #    loop from L-2 to 0 that will be RELU layer
     for l in reversed(range(L-1)):
         current_cache = caches[l]
-        dA_prev_temp, dW_temp, db_temp = one_step_backward(grads["dA" + str(l+1)], current_cache, 'relu')
+        dA_prev_temp, dW_temp, db_temp = one_step_backward(grads["dA" + str(l+1)],
+                                                                current_cache, 'relu')
         grads["dA" + str(l)] = dA_prev_temp
         grads["dW" + str(l+1)] = dW_temp
         grads["db" + str(l+1)] = db_temp
