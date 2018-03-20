@@ -189,9 +189,9 @@ def update_parameters(parameters, grads, learning_rate, optimizer = 'gd'):
 
 def classification_nn(X, Y, layer_dims, learning_rate = 0.005, optimizer = 'gd', num_iterations = 3000, print_cost = True):
     #   Implements an L-layer neural network [LINEAR=>RELU]*(L-1) -> [LLINEAR->SIGMOID]
-    #   Input : X - numpy I/P array (no. of examples, l*b*3)
-    #           Y - true label vector (0 or 1) (1, no. of examples)
-    #           layer_dims - a list containing dims. of each layer with last dim as 1
+    #   Input : X - numpy I/P array (no. of features, no. of examples)
+    #           Y - true label vector (0 or 1) (no of classes, no. of examples)
+    #           layer_dims - a list containing dims. of each layer with first and last dim as no. of features and 1 respectively
     #   Output : parameters learned during training
 
     costs = []
