@@ -22,4 +22,4 @@ def softmax(Z):
     C = - np.max(Z, axis = 0)
     exps = np.exp(Z + C)
     denominator = np.sum(exps, axis = 0)
-    return Z/denominator, Z
+    return exps/denominator, Z
